@@ -1,0 +1,17 @@
+[check] Command line arguments: Namespace(dir='pet_images/', arch='resnet', dogfile='dognames.txt')
+[check] Created pet image labels. Number of items: 40
+[check] Classified images. Number of items: 40
+[check] Adjusted results for 'is-a-dog'.
+[check] Calculated results stats. Stats keys: ['n_images', 'n_dogs_img', 'n_notdogs_img', 'n_correct_dogs', 'n_correct_notdogs', 'n_correct_breed', 'pct_correct_dogs', 'pct_correct_breed', 'pct_correct_notdogs']
+
+
+*** Results Summary for CNN Model Architecture RESNET ***
+N Images            :  40
+N Dog Images        :  30
+N Not-Dog Images    :  10
+ 
+pct_correct_dogs    : 100.0
+pct_correct_breed   : 100.0
+pct_correct_notdogs : 100.0
+
+** Total Elapsed Runtime: 0:0:0

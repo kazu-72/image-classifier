@@ -1,0 +1,5 @@
+filename,pet_label,classifier_label,is_match,is_pet_dog,is_classifier_dog
+Black_bear_01.jpg,black bear,295,0,0,0
+Coffee_mug_01.jpg,coffee mug,505,0,0,0
+Dog_01.jpg,dog,180,0,1,0
+Dog_02.jpg,dog,180,0,1,0
