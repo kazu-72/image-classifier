@@ -9,6 +9,8 @@
 #          to create the classifier labels and then compares the classifier
 #          labels to the pet image labels.
 
+import os
+
 # Imports classifier function for using CNN to classify images
 from classifier import classifier
 
@@ -23,20 +25,21 @@ def classify_images(images_dir, results_dic, model):
     # Process all files in the results dictionary
     for key in results_dic:
 
-        # Create full image path
-        image_path = images_dir + "/" + key
+        # Create full image path without duplicating directory separators.
+        image_path = os.path.join(images_dir, key)
 
-        # Classify image using the selected CNN model
+        # Classify image using the selected CNN model.
         model_label = classifier(image_path, model)
 
-        # Convert classifier label to lowercase and strip whitespace
+        # Convert classifier label to lowercase and strip whitespace.
         model_label = model_label.lower().strip()
 
-        # Get the true pet image label
-        truth = results_dic[key][0]
+        # Get the true pet image label.
+        truth = results_dic[key][0].lower().strip()
 
-        # Check whether the pet label is contained in the classifier label
-        if truth in model_label:
+        # Accept breed aliases and shortened labels such as
+        # "basset" == "basset hound" and "standard poodle" == "poodle".
+        if truth in model_label or model_label in truth:
             results_dic[key].extend([model_label, 1])
         else:
             results_dic[key].extend([model_label, 0])

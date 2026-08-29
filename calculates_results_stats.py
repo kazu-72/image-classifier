@@ -34,6 +34,7 @@ def calculates_results_stats(results_dic):
     n_correct_dogs = 0
     n_correct_notdogs = 0
     n_correct_breed = 0
+    n_match = 0
 
     # Calculate counts by iterating through results dictionary
     for key in results_dic:
@@ -58,6 +59,10 @@ def calculates_results_stats(results_dic):
             if results_dic[key][4] == 0:
                 n_correct_notdogs += 1
 
+        # Count all label matches across all images exactly once.
+        if results_dic[key][2] == 1:
+            n_match += 1
+
     # Store counts in Results Statistics Dictionary
     results_stats_dic["n_images"] = n_images
     results_stats_dic["n_dogs_img"] = n_dogs_img
@@ -65,6 +70,7 @@ def calculates_results_stats(results_dic):
     results_stats_dic["n_correct_dogs"] = n_correct_dogs
     results_stats_dic["n_correct_notdogs"] = n_correct_notdogs
     results_stats_dic["n_correct_breed"] = n_correct_breed
+    results_stats_dic["n_match"] = n_match
 
     # Calculate percentage of correctly classified dog images
     if n_dogs_img > 0:
@@ -87,5 +93,10 @@ def calculates_results_stats(results_dic):
         ) * 100.0
     else:
         results_stats_dic["pct_correct_notdogs"] = 0.0
+
+    if n_images > 0:
+        results_stats_dic["pct_match"] = (n_match / n_images) * 100.0
+    else:
+        results_stats_dic["pct_match"] = 0.0
 
     return results_stats_dic

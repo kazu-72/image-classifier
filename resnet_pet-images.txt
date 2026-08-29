@@ -2,7 +2,7 @@
 [check] Created pet image labels. Number of items: 40
 [check] Classified images. Number of items: 40
 [check] Adjusted results for 'is-a-dog'.
-[check] Calculated results stats. Stats keys: ['n_images', 'n_dogs_img', 'n_notdogs_img', 'n_correct_dogs', 'n_correct_notdogs', 'n_correct_breed', 'pct_correct_dogs', 'pct_correct_breed', 'pct_correct_notdogs']
+[check] Calculated results stats. Stats keys: ['n_images', 'n_dogs_img', 'n_notdogs_img', 'n_correct_dogs', 'n_correct_notdogs', 'n_correct_breed', 'n_match', 'pct_correct_dogs', 'pct_correct_breed', 'pct_correct_notdogs', 'pct_match']
 
 
 *** Results Summary for CNN Model Architecture RESNET ***
@@ -10,8 +10,26 @@ N Images            :  40
 N Dog Images        :  30
 N Not-Dog Images    :  10
  
-pct_correct_dogs    : 100.0
-pct_correct_breed   : 100.0
-pct_correct_notdogs : 100.0
+pct_correct_dogs    : 70.0
+pct_correct_breed   : 76.7
+pct_correct_notdogs : 90.0
+pct_match           : 67.5
 
-** Total Elapsed Runtime: 0:0:0
+INCORRECT Dog/NOT Dog Assignments:
+Real:               basset hound   Classifier:                         basset
+Real:             boston terrier   Classifier:                    boston bull
+Real:             boston terrier   Classifier:                    boston bull
+Real:             boston terrier   Classifier:                    boston bull
+Real:                        cat   Classifier:             norwegian elkhound
+Real:        german shepherd dog   Classifier:                german shepherd
+Real:        german shepherd dog   Classifier:                german shepherd
+Real: german shorthaired pointer   Classifier:    german short-haired pointer
+Real:                     poodle   Classifier:                standard poodle
+Real:                     poodle   Classifier:                standard poodle
+
+INCORRECT Dog Breed Assignment:
+Real:                     beagle   Classifier:                   walker hound
+Real:           golden retriever   Classifier:                       leonberg
+Real:             great pyrenees   Classifier:                         kuvasz
+
+** Total Elapsed Runtime: 0:0:19
