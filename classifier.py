@@ -1,57 +1,90 @@
-"""Classifier wrapper for the pet-image project."""
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# */AIPND-revision/intropyproject-classify-pet-images/classifier.py
+
+import ast
+from PIL import Image
+
+import torch
+import torchvision.transforms as transforms
+import torchvision.models as models
 
 
-def classifier(img_path: str, model_name: str = 'vgg') -> str:
-    """Return the model-predicted label for an image.
+# Load pretrained CNN models
+resnet18 = models.resnet18(
+    weights=models.ResNet18_Weights.IMAGENET1K_V1
+)
 
-    This function must never derive a prediction from the filename.
-    If the required ML dependencies are unavailable or the model cannot run,
-    the error is allowed to propagate so the project fails loudly instead of
-    producing fake accuracy.
+alexnet = models.alexnet(
+    weights=models.AlexNet_Weights.IMAGENET1K_V1
+)
+
+vgg16 = models.vgg16(
+    weights=models.VGG16_Weights.IMAGENET1K_V1
+)
+
+
+# Dictionary containing the three models
+models_dict = {
+    'resnet': resnet18,
+    'alexnet': alexnet,
+    'vgg': vgg16
+}
+
+
+# Obtain ImageNet labels used by this project
+with open('imagenet1000_clsid_to_human.txt') as imagenet_classes_file:
+    imagenet_classes_dict = ast.literal_eval(
+        imagenet_classes_file.read()
+    )
+
+
+def classifier(img_path, model_name):
     """
-    import torch
-    import torchvision
-    from PIL import Image
-    from torchvision import transforms
+    Classifies an image using a pretrained CNN model.
 
-    model_name = (model_name or 'vgg').lower()
-    model_map = {
-        'resnet': ('resnet18', torchvision.models.resnet.ResNet18_Weights),
-        'alexnet': ('alexnet', torchvision.models.AlexNet_Weights),
-        'vgg': ('vgg16', torchvision.models.VGG16_Weights),
-    }
+    Parameters:
+        img_path - path to the image
+        model_name - CNN architecture:
+                     resnet, alexnet, or vgg
 
-    if model_name not in model_map:
-        raise ValueError(f"Unsupported model: {model_name}")
+    Returns:
+        ImageNet classification label
+    """
 
-    model_fn_name, weights_enum = model_map[model_name]
-    weights = getattr(weights_enum, 'IMAGENET1K_V1', None) or getattr(weights_enum, 'DEFAULT', None)
-    model_ctor = getattr(torchvision.models, model_fn_name)
+    # Load the image
+    img_pil = Image.open(img_path).convert('RGB')
 
-    if weights is not None:
-        model = model_ctor(weights=weights)
-        preprocess = weights.transforms()
-        meta = getattr(weights, 'meta', {}) or {}
-        categories = meta.get('categories') if isinstance(meta, dict) else getattr(meta, 'categories', None)
-    else:
-        model = model_ctor(weights=None)
-        preprocess = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ])
-        categories = None
+    # Define image preprocessing
+    preprocess = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        )
+    ])
 
+    # Preprocess image
+    img_tensor = preprocess(img_pil)
+
+    # Add batch dimension
+    img_tensor = img_tensor.unsqueeze(0)
+
+    # Select the requested model
+    model = models_dict[model_name]
+
+    # Put model in evaluation mode
     model.eval()
-    img = Image.open(img_path).convert('RGB')
-    input_tensor = preprocess(img).unsqueeze(0)
 
+    # Run the image through the pretrained model
     with torch.no_grad():
-        outputs = model(input_tensor)
-        _, predicted = torch.max(outputs, 1)
-        idx = int(predicted.item())
+        output = model(img_tensor)
 
-    if categories and 0 <= idx < len(categories):
-        return categories[idx]
-    return str(idx)
+    # Find the predicted ImageNet class index
+    pred_idx = output.argmax(dim=1).item()
+
+    # Return the original project ImageNet label.
+    # This preserves labels/aliases expected by the project.
+    return imagenet_classes_dict[pred_idx]
